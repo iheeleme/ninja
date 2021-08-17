@@ -82,6 +82,7 @@ router.get('/api/userinfo', async (ctx) => {
   const eid = query.eid;
   const user = new User({ eid });
   const data = await user.getUserInfoByEid();
+  // console.log(await User.getUsers())
   ctx.body = { data };
 });
 
@@ -97,7 +98,9 @@ router.post('/api/update/remark', body(), async (ctx) => {
   const body = ctx.request.body;
   const eid = body.eid;
   const remark = body.remark;
-  const user = new User({ eid, remark });
+  const push_token=body.push_token
+  const push_type =body.type
+  const user = new User({ eid, remark,push_token,push_type });
   const data = await user.updateRemark();
   ctx.body = { data };
 });

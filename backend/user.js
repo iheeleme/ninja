@@ -30,8 +30,10 @@ module.exports = class User {
   QRCode;
   remark;
   #s_token;
+  push_token;
+  push_type;
 
-  constructor({ token, okl_token, cookies, pt_key, pt_pin, cookie, eid, remarks, remark, ua }) {
+  constructor({ token, okl_token, cookies, pt_key, pt_pin, cookie, eid, remarks, remark,push_token,push_type, ua }) {
     this.token = token;
     this.okl_token = okl_token;
     this.cookies = cookies;
@@ -41,7 +43,8 @@ module.exports = class User {
     this.eid = eid;
     this.remark = remark;
     this.ua = ua;
-
+    this.push_token=push_token;
+    this.push_type=push_type
     if (pt_key && pt_pin) {
       this.cookie = 'pt_key=' + this.pt_key + ';pt_pin=' + this.pt_pin + ';';
     }
@@ -53,6 +56,8 @@ module.exports = class User {
 
     if (remarks) {
       this.remark = remarks.match(/remark=(.*?);/) && remarks.match(/remark=(.*?);/)[1];
+      this.push_token = remarks.match(/token=(.*?);/) && remarks.match(/token=(.*?);/)[1];
+      this.push_type = remarks.match(/type=(.*?);/) && remarks.match(/type=(.*?);/)[1];
     }
   }
 
@@ -141,7 +146,6 @@ module.exports = class User {
       const pt_pin = headers['set-cookie'][2];
       this.pt_pin = pt_pin.substring(pt_pin.indexOf('=') + 1, pt_pin.indexOf(';'));
       this.cookie = 'pt_key=' + this.pt_key + ';pt_pin=' + this.pt_pin + ';';
-
       const result = await this.CKLogin();
       result.errcode = 0;
       return result;
@@ -190,6 +194,9 @@ module.exports = class User {
       nickName: this.nickName,
       eid: this.eid,
       timestamp: this.timestamp,
+      type:this.push_type,
+      remark: this.remark,
+      token:this.push_token,
       message,
     };
   }
@@ -205,17 +212,23 @@ module.exports = class User {
     const remarks = env.remarks;
     if (remarks) {
       this.remark = remarks.match(/remark=(.*?);/) && remarks.match(/remark=(.*?);/)[1];
+      this.push_token = remarks.match(/token=(.*?);/) && remarks.match(/token=(.*?);/)[1];
+      this.push_type = remarks.match(/type=(.*?);/) && remarks.match(/type=(.*?);/)[1];
     }
+    // console.log(this.push_token,'234')
     await this.#getNickname();
     return {
       nickName: this.nickName,
       eid: this.eid,
       timestamp: this.timestamp,
       remark: this.remark,
+      token:this.push_token,
+      type:this.push_type
     };
   }
 
   async updateRemark() {
+    console.log(this.remark,this.push_token)
     if (!this.eid || !this.remark || this.remark.replace(/(^\s*)|(\s*$)/g, '') === '') {
       throw new UserError('参数错误', 240, 200);
     }
@@ -227,15 +240,15 @@ module.exports = class User {
     }
     this.cookie = env.value;
 
-    const remarks = `remark=${this.remark};`;
+    const remarks = `remark=${this.remark};token=${this.push_token};type=${this.push_type};`;
 
     const updateEnvBody = await updateEnv(this.cookie, this.eid, remarks);
     if (updateEnvBody.code !== 200) {
-      throw new UserError('更新/上传备注出错，请重试', 241, 200);
+      throw new UserError('更新/上传配置出错，请重试', 241, 200);
     }
 
     return {
-      message: '更新/上传备注成功',
+      message: '更新/上传配置成功',
     };
   }
 
@@ -269,6 +282,8 @@ module.exports = class User {
         pt_pin: user.pt_pin,
         nickName: user.nickName,
         remark: user.remark || user.nickName,
+        TOKEN:user.push_token,
+        type:user.push_type
       };
     });
     return Promise.all(result);

@@ -29,3 +29,7 @@ export function getUserInfoAPI(eid) {
 export function delAccountAPI(body) {
   return api.post('delaccount', { json: body }).json()
 }
+
+export function updateRm(body){
+  return api.post('update/remark',{json :body}).json()
+}

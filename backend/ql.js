@@ -5,11 +5,11 @@ require('dotenv').config();
 const { readFile } = require('fs/promises');
 const path = require('path');
 
-const qlDir = process.env.QL_DIR || '/ql';
+const qlDir = process.env.QL_DIR || '/Users/iheel/ql';
 const authFile = path.join(qlDir, 'config/auth.json');
 
 const api = got.extend({
-  prefixUrl: process.env.QL_URL || 'http://localhost:5600',
+  prefixUrl: process.env.QL_URL || 'http://localhost:5700',
   retry: { limit: 0 },
 });
 

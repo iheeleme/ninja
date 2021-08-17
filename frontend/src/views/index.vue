@@ -10,12 +10,53 @@
       </div>
       <div class="card-footer">
         <el-button size="small" auto @click="logout">退出登录</el-button>
-        <el-button type="danger" size="small" auto @click="delAccount"
-          >删除账号</el-button
-        >
+        <el-button type="danger" size="small" auto @click="delAccount">删除账号</el-button>
       </div>
     </div>
-
+    <div class="card">
+      <div class="card-header">
+        <p class="card-title">信息配置</p>
+        <span class="card-subtitle">用户识别信息及推送配置</span>
+      </div>
+      <div class="card-body">
+        <el-form :model="form" label-width="80px">
+          <el-form-item label="备注">
+            <el-input v-model="form.remark"></el-input>
+          </el-form-item>
+          <el-form-item label="推送token">
+            <el-input v-model="form.token"></el-input>
+          </el-form-item>
+          <el-form-item label="推送方式">
+            <el-radio-group v-model="form.type">
+              <el-radio label="PLUS">公众号</el-radio>
+              <el-radio label="BARK">APP</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="updateRemark()">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <p class="card-title">推送token获取说明</p>
+      </div>
+      <div class="card-body">
+        <h1 class="card-subtitle">微信推送方式</h1>
+        <p>
+          1、扫码关注公众号，发送token。
+          <br />2、复制返回内容，填入推送token，提交。
+        </p>
+        <el-image src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqs2hg88j60by0by3yx02.jpg" style="width:600px;height:600px;" :fit="fit"></el-image>
+        <el-image style="width: 300px;" src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqbbfhuoj60u01t0q4j02.jpg" :fit="fit"></el-image>
+        <hr>
+        <h1 class="card-subtitle">APP推送方式</h1>
+        <p>1、仅限iPhone设备<br>
+            2、安装APP获取token后填入token
+        </p>
+      </div>
+    </div>
     <div class="card">
       <div class="card-header">
         <p class="card-title">常见活动位置</p>
@@ -23,20 +64,10 @@
       </div>
       <div class="card-body">
         <ul>
-          <li
-            v-for="(item, index) in activity"
-            :key="index"
-            class="leading-normal"
-          >
+          <li v-for="(item, index) in activity" :key="index" class="leading-normal">
             <span>{{ item.name }}：</span>
             <span class="pr-2">{{ item.address }}</span>
-            <a
-              v-if="item.href"
-              class="text-blue-400"
-              href="#"
-              @click="openUrlWithJD(item.href)"
-              >直达链接</a
-            >
+            <a v-if="item.href" class="text-blue-400" href="#" @click="openUrlWithJD(item.href)">直达链接</a>
           </li>
         </ul>
       </div>
@@ -45,7 +76,7 @@
 </template>
 
 <script>
-import { getUserInfoAPI, delAccountAPI } from '@/api/index'
+import { getUserInfoAPI, delAccountAPI, updateRm } from '@/api/index'
 import { onMounted, reactive, toRefs } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -57,6 +88,11 @@ export default {
     let data = reactive({
       nickName: undefined,
       timestamp: undefined,
+      form: {
+        remark: '',
+        token: '',
+        type:'PLUS'
+      },
     })
 
     const getInfo = async () => {
@@ -73,9 +109,27 @@ export default {
       }
       data.nickName = userInfo.data.nickName
       data.timestamp = new Date(userInfo.data.timestamp).toLocaleString()
+      data.form.token = userInfo.data.token
+      data.form.remark = userInfo.data.remark
+      data.form.type=userInfo.data.type
     }
 
     onMounted(getInfo)
+
+    const updateRemark = async () => {
+      const eid = localStorage.getItem('eid')
+      const body=await updateRm({
+        eid: eid,
+        remark: data.form.remark,
+        push_token: data.form.token,
+        type:data.form.type
+      })
+      if (body.message) {
+        ElMessage.success(body.message)
+      } else {
+        ElMessage.error('更新失败')
+      }
+    }
 
     const logout = () => {
       localStorage.removeItem('eid')
@@ -166,6 +220,7 @@ export default {
       logout,
       delAccount,
       openUrlWithJD,
+      updateRemark,
     }
   },
 }
