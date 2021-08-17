@@ -1,3 +1,7 @@
+# 基于Ninja开源版本修改版
+
+功能新增管理token单独用户推送配置。
+
 # Ninja
 
 一次对于 koa2 vue3 vite 的简单尝试
