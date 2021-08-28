@@ -6,7 +6,7 @@
           <p class="card-title">登录</p>
           <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle">请点击下方按钮获取验证码登录</span>
+        <span class="card-subtitle">请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！</span>
       </div>
       <div class="card-body">
         <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="100px" style="width:500px;">
