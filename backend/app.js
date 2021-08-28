@@ -70,6 +70,21 @@ router.post('/api/check', body(), async (ctx) => {
   ctx.body = { data };
 });
 
+router.post('/api/phonesend', body(), async (ctx) => {
+  const body = ctx.request.body;
+  const user = new User(body);
+  const data = await user.phoneSend(body.phone);
+  ctx.body = { data };
+});
+
+router.post('/api/phonelogin', body(), async (ctx) => {
+  const body = ctx.request.body;
+  // console.log(body)
+  const user = new User(body);
+  const data = await user.phoneLogin(body.phone,body.code);
+  ctx.body = { data };
+});
+
 router.post('/api/cklogin', body(), async (ctx) => {
   const body = ctx.request.body;
   const user = new User(body);

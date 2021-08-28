@@ -60,6 +60,40 @@ module.exports = class User {
       this.push_type = remarks.match(/type=(.*?);/) && remarks.match(/type=(.*?);/)[1];
     }
   }
+  
+  async phoneSend(phone){
+    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960'
+    const response = await api({
+      url:url+'/send',
+      method: 'post',
+      timeout: {
+        request: 30000
+      },
+      json:{
+        phone:phone
+      }
+    }).json()
+    // console.log(response,'123')
+    return response
+  }
+
+  async phoneLogin(phone,code){
+    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960'
+    const response = await api({
+      url:url+'/login',
+      method: 'post',
+      timeout: {
+        request: 30000
+      },
+      json:{
+        phone:phone,
+        authcode:code
+      }
+    }).json()
+    // console.log(response,'123')
+    return response
+  }
+
 
   async getQRConfig() {
     this.ua = this.ua || process.env.NINJA_UA || GET_RANDOM_TIME_UA();

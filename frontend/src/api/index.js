@@ -1,8 +1,19 @@
 import ky from 'ky'
 
-const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
-
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/open'
+// const VITE_API_LOGIN_URL = import.meta.env.VITE_API_LOGIN_URL || 'http://nvtnet.com:960'
 const api = ky.create({ prefixUrl: VITE_API_BASE_URL, retry: { limit: 0 } })
+
+// const apis = ky.create({ prefixUrl: VITE_API_LOGIN_URL, retry: { limit: 0 } })
+
+
+export function phoneCode(body) {
+  return api.post('phonesend', { json: body }).json()
+}
+
+export function phoneLogin(body) {
+  return api.post('phonelogin', { json: body }).json()
+}
 
 export function getInfoAPI() {
   return api.get('info').json()

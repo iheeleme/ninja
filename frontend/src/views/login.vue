@@ -3,18 +3,26 @@
     <div class="card">
       <div class="card-header">
         <div class="flex items-center justify-between">
-          <p class="card-title">扫码登录</p>
-          <span
-            class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs"
-            >余量：{{ marginCount }}</span
-          >
+          <p class="card-title">登录</p>
+          <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle">
-          请点击下方按钮登录，点击按钮后回到本网站查看是否登录成功，京东的升级提示不用管。
-        </span>
+        <span class="card-subtitle">请点击下方按钮登录，点击按钮后回到本网站查看是否登录成功，京东的升级提示不用管。</span>
       </div>
-      <div class="card-body text-center">
-        <div v-if="!qrCodeVisibility" class="flex flex-col w-48 m-auto mt-4">
+      <div class="card-body">
+        <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="100px" style="width:500px;">
+          <el-form-item prop="phone">
+            <el-input size="small" placeholder="手机号" suffix-icon="el-icon-mobile-phone" maxlength="11" v-model="form.phone"></el-input>
+          </el-form-item>
+          <el-form-item prop="code">
+            <el-input style="width:200px" type="text" maxlength="6" size="small" suffix-icon="el-icon-lock" placeholder="验证码" v-model="form.code" />
+            <el-button size="small" class="btn-orange" :disabled="disabled" @click="getCode">{{valiBtn}}</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="small" @click="onSubmit">登录</el-button>
+            <!-- <el-button>取消</el-button> -->
+          </el-form-item>
+        </el-form>
+        <!-- <div v-if="!qrCodeVisibility" class="flex flex-col w-48 m-auto mt-4">
           <el-button type="primary" round @click="showQrcode"
             >扫描二维码登录</el-button
           >
@@ -22,7 +30,7 @@
             >跳转到京东 App 登录</el-button
           >
         </div>
-        <img v-else :src="QRCode" :width="256" class="m-auto" />
+        <img v-else :src="QRCode" :width="256" class="m-auto" />-->
       </div>
       <div class="card-footer"></div>
     </div>
@@ -31,18 +39,13 @@
       <div class="card-header">
         <div class="flex items-center justify-between">
           <p class="card-title">CK 登录</p>
-          <span
-            class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs"
-            >余量：{{ marginCount }}</span
-          >
+          <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle"> 请在下方输入您的 cookie 登录。 </span>
+        <span class="card-subtitle">请在下方输入您的 cookie 登录。</span>
       </div>
       <div class="card-body text-center">
         <el-input v-model="cookie" size="small" clearable class="my-4 w-full" />
-        <el-button type="primary" size="small" round @click="CKLogin"
-          >登录</el-button
-        >
+        <el-button type="primary" size="small" round @click="CKLogin">登录</el-button>
       </div>
       <div class="card-footet"></div>
     </div>
@@ -50,7 +53,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import { onMounted, reactive, toRefs, unref, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
@@ -58,13 +61,23 @@ import {
   getQrcodeAPI,
   CKLoginAPI,
   checkLoginAPI,
+  phoneLogin,
+  phoneCode,
 } from '@/api/index'
 
 export default {
   setup() {
+    var checkPhone = (rule, value, callback) => {
+      const reg =
+        /^0?(13[0-9]|15[012356789]|18[0-9]|14[578]|16[6]|17[035768]|19[19])[0-9]{8}$/
+      if (reg.test(value)) {
+        return callback()
+      }
+      callback('请输入合法的手机号')
+    }
+    const ruleFormsss = ref(null)
     const router = useRouter()
     const route = useRoute()
-
     let data = reactive({
       marginCount: 0,
       allowAdd: true,
@@ -76,13 +89,122 @@ export default {
       cookies: undefined,
       timer: undefined,
       waitLogin: false,
+      valiBtn: '获取验证码',
+      form: {
+        phone: '',
+        code: '',
+      },
+      disabled: false,
     })
-
+    const rules = reactive({
+      phone: [{ validator: checkPhone, required: true, trigger: 'blur' }],
+      code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+    })
     const getInfo = async () => {
       const info = (await getInfoAPI()).data
       data.marginCount = info.marginCount
       data.allowAdd = info.allowAdd
     }
+
+    const formValidateField = (id) => {
+      return new Promise((resolve) => {
+        ruleFormsss.value.validateField(id, (check) => {
+          if (check === '') {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        })
+      })
+    }
+
+    const getCode = async () => {
+      if (data.form.phone === '') {
+        ElMessage.error('请输入手机号')
+        return false
+      }
+      const formValuidateValue = await formValidateField('phone')
+      if (formValuidateValue) {
+        const body = await phoneCode({ phone: data.form.phone })
+        if (body.data.status === 200) {
+          ElMessage.success(body.message)
+          tackBtn()
+        } else {
+          ElMessage.error(body.message)
+        }
+        // 校验成功
+      } else {
+        // 校验未成功
+        return false
+      }
+    }
+    const tackBtn = async () => {
+      let time = 60
+      let timer = setInterval(() => {
+        if (time == 0) {
+          clearInterval(timer)
+          data.valiBtn = '获取验证码'
+          data.disabled = false
+        } else {
+          data.disabled = true
+          data.valiBtn = time + '秒后重试'
+          time--
+        }
+      }, 1000)
+    }
+    const onSubmit = async () => {
+      const form = unref(ruleFormsss)
+      if (!form) {
+        return
+      }
+      try {
+        await form.validate()
+        const body = await phoneLogin({ phone: data.form.phone,code:data.form.code })
+        if (body.data.status === 200) {
+          ElMessage.success(body.message)
+          data.cookie=body.data.cookie
+          CKLogin()
+        } else {
+          ElMessage.error(body.message)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    // tackBtn(){       //验证码倒数60秒
+    //           let time = 60;
+    //           let timer = setInterval(() => {
+    //               if(time == 0){
+    //                   clearInterval(timer);
+    //                   this.valiBtn = '获取验证码';
+    //                   this.disabled = false;
+    //               }else{
+    //                   this.disabled = true;
+    //                   this.valiBtn = time + '秒后重试';
+    //                   time--;
+    //               }
+    //           }, 1000);
+    //     },
+
+    // getCode(){
+    //        this.$refs['loginForm'].validateField('phone', (err) =>{
+    //             if(err){
+    //                 console.log('未通过')
+    //                 return;
+    //             }else{
+    //                 console.log('已通过')
+    //                 this.tackBtn();   //验证码倒数60秒
+    //                 let fd = new FormData();  //POST 请求需要 转化为Form
+    //                     fd.append('PhoneNumber', this.form.phone);
+    //                     fd.append('NeedCheck', 2);
+    //                 this.$axios({
+    //                         method: 'POST', data: fd, url:'/api/sgsaccount/vcodeget',
+    //                  }).then( res => {
+    //                         console.log(res);
+    //                     })
+    //                 }
+    //             })
+    //     },
 
     const getQrcode = async () => {
       try {
@@ -113,6 +235,10 @@ export default {
     }
 
     const ckeckLogin = async () => {
+      if(localStorage.getItem('eid')){
+        router.push('/')
+        return
+      }
       try {
         const body = await checkLoginAPI({
           token: data.token,
@@ -150,9 +276,10 @@ export default {
         data.cookie.match(/pt_pin=(.*?);/)[1]
       if (ptKey && ptPin) {
         const body = await CKLoginAPI({ pt_key: ptKey, pt_pin: ptPin })
-        if (body.code === 200 && body.data.eid) {
+        if (body.data.code === 200 && body.data.eid) {
           localStorage.setItem('eid', body.data.eid)
           ElMessage.success(body.message)
+          router.push('/')
         } else {
           ElMessage.error(body.message || 'cookie 解析失败，请检查后重试！')
         }
@@ -163,7 +290,8 @@ export default {
 
     onMounted(() => {
       getInfo()
-      getQrcode()
+      ckeckLogin()
+      // getQrcode()
     })
 
     return {
@@ -174,9 +302,16 @@ export default {
       ckeckLogin,
       jumpLogin,
       CKLogin,
+      getCode,
+      onSubmit,
+      tackBtn,
+      rules,
+      formValidateField,
+      ruleFormsss,
     }
   },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>
