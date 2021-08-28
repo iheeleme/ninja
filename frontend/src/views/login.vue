@@ -6,7 +6,7 @@
           <p class="card-title">登录</p>
           <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle">请点击下方按钮登录，点击按钮后回到本网站查看是否登录成功，京东的升级提示不用管。</span>
+        <span class="card-subtitle">请点击下方按钮获取验证码登录</span>
       </div>
       <div class="card-body">
         <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="100px" style="width:500px;">
