@@ -139,7 +139,7 @@ export default {
     const delAccount = async () => {
       const eid = localStorage.getItem('eid')
       const body = await delAccountAPI({ eid })
-      if (body.code !== 200) {
+      if (body.data.code !== 200) {
         ElMessage.error(body.message)
       } else {
         ElMessage.success(body.message)

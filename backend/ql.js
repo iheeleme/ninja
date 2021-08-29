@@ -9,7 +9,7 @@ require('dotenv').config();
 //const authFile = path.join(qlDir, 'config/auth.json');
 
 const api = got.extend({
-  prefixUrl: process.env.QL_URL || 'http://localhost:5700',
+  prefixUrl: process.env.QL_URL || 'http://localhost:6700',
   retry: { limit: 0 },
 });
 
@@ -17,8 +17,8 @@ async function getToken() {
   const body = await api({
     url: 'open/auth/token',
     searchParams: {
-      client_id: process.env.QL_Client_ID || 'DLdq-oa3amRi',
-      client_secret: process.env.QL_Client_Secret || '-MGX8IOzC2Tl-E7R4fEIWUTC',
+      client_id: process.env.QL_Client_ID || 'Hl-1kF3ZeZ0O',
+      client_secret: process.env.QL_Client_Secret || 'QUauuv4hqAk5FHMGDFJ1ap-B',
     },
     headers: {
       Accept: 'application/json',
