@@ -282,6 +282,7 @@ module.exports = class User {
     }
 
     return {
+      code:200,
       message: '更新/上传配置成功',
     };
   }
@@ -294,6 +295,7 @@ module.exports = class User {
     }
     this.#sendNotify('Ninja 运行通知', `用户 ${this.nickName}(${decodeURIComponent(this.pt_pin)}) 删号跑路了`);
     return {
+      code:200,
       message: '账户已移除',
     };
   }
