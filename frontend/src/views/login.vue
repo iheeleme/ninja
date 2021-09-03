@@ -6,7 +6,12 @@
           <p class="card-title">登录</p>
           <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle">请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！</span>
+        <span class="card-subtitle">请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！
+          <h1 class="title">获取验证码按钮只能点一次！</h1>
+          <h1 class="title">获取验证码按钮只能点一次！</h1>
+          <h1 class="title">获取验证码按钮只能点一次！</h1>
+          响应会有延迟，多次点击验证码重复发送导致登录失败！
+        </span>
       </div>
       <div class="card-body">
         <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="20%" style="width:80%;">
@@ -314,4 +319,10 @@ export default {
 </script>
 
 <style scoped>
+.title{
+  font-size: 30px;
+  font-weight: 20px;
+  line-height: 30px;
+  color:red;
+}
 </style>
