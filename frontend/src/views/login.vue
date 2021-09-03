@@ -9,7 +9,7 @@
         <span class="card-subtitle">请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！</span>
       </div>
       <div class="card-body">
-        <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="100px" style="width:500px;">
+        <el-form :model="form" ref="ruleFormsss" :rules="rules" label-width="20%" style="width:80%;">
           <el-form-item prop="phone">
             <el-input size="small" placeholder="手机号" suffix-icon="el-icon-mobile-phone" maxlength="11" v-model="form.phone"></el-input>
           </el-form-item>

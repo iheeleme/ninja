@@ -211,6 +211,14 @@ export default {
         name: '京东极速版红包',
         address: '京东极速版APP-我的-红包',
       },
+       {
+        name: '京东赚赚',
+        address: '微信小程序京东赚赚',
+      },
+       {
+        name: '京东秒秒币',
+        address: '京东首页-京东秒杀-立即签到领红包',
+      },
     ]
 
     return {
