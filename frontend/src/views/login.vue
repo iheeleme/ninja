@@ -320,7 +320,7 @@ export default {
 
 <style scoped>
 .title{
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 20px;
   line-height: 30px;
   color:red;
