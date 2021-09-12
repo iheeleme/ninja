@@ -20,7 +20,7 @@
           </el-form-item>
           <el-form-item prop="code">
             <el-input style="width:200px" type="text" maxlength="6" size="small" suffix-icon="el-icon-lock" placeholder="验证码" v-model="form.code" />
-            <el-button size="small" class="btn-orange" :disabled="disabled" @click="getCode">{{valiBtn}}</el-button>
+            <el-button size="small" class="btn-orange" :disabled="disabled" :loading="onSubmitload" @click="getCode">{{valiBtn}}</el-button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="small" @click="onSubmit">登录</el-button>
@@ -94,6 +94,7 @@ export default {
       cookies: undefined,
       timer: undefined,
       waitLogin: false,
+      onSubmitload:false,
       valiBtn: '获取验证码',
       form: {
         phone: '',
@@ -128,9 +129,11 @@ export default {
         ElMessage.error('请输入手机号')
         return false
       }
+      data.onSubmitload=true
       const formValuidateValue = await formValidateField('phone')
       if (formValuidateValue) {
         const body = await phoneCode({ phone: data.form.phone })
+        data.onSubmitload=false
         if (body.data.status === 200) {
           ElMessage.success(body.message)
           tackBtn()
