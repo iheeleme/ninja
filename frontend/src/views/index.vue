@@ -48,8 +48,8 @@
           1、扫码关注公众号，发送token。
           <br />2、复制返回内容，填入推送token，提交。
         </p>
-        <el-image src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqs2hg88j60by0by3yx02.jpg" style="width:600px;height:600px;" :fit="fit"></el-image>
-        <el-image style="width: 300px;" src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqbbfhuoj60u01t0q4j02.jpg" :fit="fit"></el-image>
+        <el-image src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqs2hg88j60by0by3yx02.jpg" style="width:100%;height:100%;" :fit="fit"></el-image>
+        <el-image style="width: 100%;" src="https://tva1.sinaimg.cn/large/008i3skNgy1gtiqbbfhuoj60u01t0q4j02.jpg" :fit="fit"></el-image>
         <hr>
         <h1 class="card-subtitle">APP推送方式</h1>
         <p>1、仅限iPhone设备<br>
