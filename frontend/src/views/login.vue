@@ -6,11 +6,11 @@
           <p class="card-title">登录</p>
           <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full font-normal text-xs">余量：{{ marginCount }}</span>
         </div>
-        <span class="card-subtitle">请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！
+        <span class="card-subtitle">
+          请点击下方按钮获取验证码登录,获取验证码时间较长（3～10s），请耐心等待！
           <h1 class="title">获取验证码按钮只能点一次！</h1>
           <h1 class="title">获取验证码按钮只能点一次！</h1>
-          <h1 class="title">获取验证码按钮只能点一次！</h1>
-          响应会有延迟，多次点击验证码重复发送导致登录失败！
+          <h1 class="title">获取验证码按钮只能点一次！</h1>响应会有延迟，多次点击验证码重复发送导致登录失败！
         </span>
       </div>
       <div class="card-body">
@@ -94,7 +94,7 @@ export default {
       cookies: undefined,
       timer: undefined,
       waitLogin: false,
-      onSubmitload:false,
+      onSubmitload: false,
       valiBtn: '获取验证码',
       form: {
         phone: '',
@@ -129,21 +129,26 @@ export default {
         ElMessage.error('请输入手机号')
         return false
       }
-      data.onSubmitload=true
-      const formValuidateValue = await formValidateField('phone')
-      if (formValuidateValue) {
-        const body = await phoneCode({ phone: data.form.phone })
-        data.onSubmitload=false
-        if (body.data.status === 200) {
-          ElMessage.success(body.message)
-          tackBtn()
+      try {
+        data.onSubmitload = true
+        const formValuidateValue = await formValidateField('phone')
+        if (formValuidateValue) {
+          const body = await phoneCode({ phone: data.form.phone })
+          data.onSubmitload = false
+          if (body.data.status === 200) {
+            ElMessage.success(body.message)
+            tackBtn()
+          } else {
+            ElMessage.error(body.message)
+          }
+          // 校验成功
         } else {
-          ElMessage.error(body.message)
+          // 校验未成功
+          return false
         }
-        // 校验成功
-      } else {
-        // 校验未成功
-        return false
+      } catch(err) {
+        ElMessage.error(err)
+        data.onSubmitload = false
       }
     }
     const tackBtn = async () => {
@@ -167,15 +172,19 @@ export default {
       }
       try {
         await form.validate()
-        const body = await phoneLogin({ phone: data.form.phone,code:data.form.code })
+        const body = await phoneLogin({
+          phone: data.form.phone,
+          code: data.form.code,
+        })
         if (body.data.status === 200) {
           ElMessage.success(body.message)
-          data.cookie=body.data.cookie
+          data.cookie = body.data.cookie
           CKLogin()
         } else {
           ElMessage.error(body.message)
         }
       } catch (err) {
+        ElMessage.error(body.message)
         console.log(err)
       }
     }
@@ -243,7 +252,7 @@ export default {
     }
 
     const ckeckLogin = async () => {
-      if(localStorage.getItem('eid')){
+      if (localStorage.getItem('eid')) {
         router.push('/')
         return
       }
@@ -322,10 +331,10 @@ export default {
 </script>
 
 <style scoped>
-.title{
+.title {
   font-size: 20px;
   font-weight: 20px;
   line-height: 30px;
-  color:red;
+  color: red;
 }
 </style>
