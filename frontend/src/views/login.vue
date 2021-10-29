@@ -147,7 +147,7 @@ export default {
           return false
         }
       } catch(err) {
-        ElMessage.error(err)
+        ElMessage.error('发送验证码失败',err)
         data.onSubmitload = false
       }
     }
