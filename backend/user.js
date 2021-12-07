@@ -62,12 +62,12 @@ module.exports = class User {
   }
   
   async phoneSend(phone){
-    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960'
+    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960/'
     const response = await api({
       url:url+'/send',
       method: 'post',
       timeout: {
-        request: 30000
+        request: 50000
       },
       json:{
         phone:phone
@@ -78,12 +78,12 @@ module.exports = class User {
   }
 
   async phoneLogin(phone,code){
-    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960'
+    const url =process.env.API_LOGIN_URL || 'http://nvtnet.com:960/'
     const response = await api({
       url:url+'/login',
       method: 'post',
       timeout: {
-        request: 30000
+        request: 50000
       },
       json:{
         phone:phone,
@@ -334,7 +334,7 @@ module.exports = class User {
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-cn',
         Connection: 'keep-alive',
-        Cookie: 'pt_key='+this.pt_key+';',
+        Cookie: this.cookie,
         Referer: 'https://home.m.jd.com/myJd/newhome.action',
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
