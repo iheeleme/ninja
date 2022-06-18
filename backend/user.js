@@ -313,15 +313,18 @@ module.exports = class User {
   static async getUsers() {
     const envs = await getEnvs();
     const result = envs.map(async (env) => {
-      const user = new User({ cookie: env.value, remarks: env.remarks });
-      await user.#getNickname(true);
-      return {
-        pt_pin: user.pt_pin,
-        nickName: user.nickName,
-        remark: user.remark || user.nickName,
-        TOKEN:user.push_token,
-        type:user.push_type
-      };
+      if(env.status==0){
+        const user = new User({ cookie: env.value, remarks: env.remarks });
+        await user.#getNickname(true);
+        return {
+          pt_pin: user.pt_pin,
+          nickName: user.nickName,
+          remark: user.remark || user.nickName,
+          TOKEN:user.push_token,
+          type:user.push_type
+        };
+      }
+     
     });
     return Promise.all(result);
   }

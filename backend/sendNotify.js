@@ -668,6 +668,7 @@ function iGotNotify(text, desp, params = {}) {
 	})
 }
 function pushpython(text, desp) {
+	// console.log(text,desp)
 	return new Promise(resolve => {
 		const options = {
 			url: `http://localhost:5701/api/users`,
